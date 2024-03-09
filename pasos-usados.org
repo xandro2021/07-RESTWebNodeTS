@@ -245,7 +245,8 @@ npx prisma migrate dev --name init
 #+begin_src json
   "scripts": {
     "dev": "tsnd --respawn --clear src/app.ts",
-    "build": "rimraf ./dist && tsc",
+    "build": "rimraf ./dist && tsc && npm run prisma:migrate:prod",
+    "start": "npm run build && node dist/app.js",
     "prisma:migrate:prod": "prisma migrate deploy"
   },
 #+end_src

@@ -1,0 +1,251 @@
+#+title: Pasos Usados
+
+* Inicializar
+#+begin_src bash
+npm init -y
+#+end_src
+
+* Set typescript/Node
++ Se siguen los pasos del [[https://gist.github.com/Klerith/3ba17e86dc4fabd8301a59699b9ffc0b][repositorio de github]]
+
+* Estructura
+** Crear folder src
+*** app.ts
+**** Ejemplos Introductorios sobre peticion http
+Serie de ejemplos basicos introductorios sin frameworks
+***** Ejemplo server 01
++ Respuesta general para todas las rutas
+#+begin_src js
+import http from 'http';
+
+const server = http.createServer((req, res) => {
+
+  console.log(req.url);
+
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.write(`<h1>URL ${req.url}!</h1>`);
+  res.end();
+
+});
+
+server.listen(8080, () => {
+  console.log('Server running on port 8080');
+})
+#+end_src
+***** Ejemplo server 02
++ Mismo que el anterior pero ahora se modificar la funcion de server
+#+begin_src js
+const server = http.createServer((req, res) => {
+
+  console.log(req.url);
+
+  const data = { name: 'John Doe', age: 30, city: 'New York' };
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(data));
+
+});
+#+end_src
+***** Ejemplo server 03
+****** Crear folder public
+******* Crear archivo index.html, css/styles.css y app.js
+******  app.ts
+#+begin_src js
+import fs from 'fs';
+import http from 'http';
+
+const server = http.createServer((req, res) => {
+
+  console.log(req.url);
+
+  if (req.url === '/') {
+    const htmlFile = fs.readFileSync('./public/index.html', 'utf-8');
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(htmlFile);
+  }
+  else {
+    res.writeHead(404, { 'Content-Type': 'text/html' });
+    res.end();
+  }
+
+});
+
+server.listen(8080, () => {
+  console.log('Server running on port 8080');
+})
+#+end_src
+***** Ejemplo Server 04
++ Multiples archivos a servir en la peticion
+#+begin_src js
+import fs from 'fs';
+import http from 'http';
+
+const server = http.createServer((req, res) => {
+
+  console.log(req.url);
+
+  if (req.url === '/') {
+    const htmlFile = fs.readFileSync('./public/index.html', 'utf-8');
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(htmlFile);
+    return;
+  }
+
+  if (req.url?.endsWith('.js')) {
+    res.writeHead(200, { 'Content-Type': 'application/javascript' });
+  }
+  else if (req.url?.endsWith('.css')) {
+    res.writeHead(200, { 'Content-Type': 'text/css' });
+  }
+
+  const responseContent = fs.readFileSync(`./public${req.url}`, 'utf-8');
+  res.end(responseContent);
+
+});
+
+server.listen(8080, () => {
+  console.log('Server running on port 8080');
+})
+#+end_src
+**** http2
+[[https://gist.github.com/Klerith/bc65ca4f398cadd7f292c26a04d62012][Link para generar certificado]]
+Se corre el comando y eso genera dos archivos. Dichos archivos se mueven a la carpeta keys la cual tambien hay que crear
+#+begin_src js
+import fs from 'fs';
+import http2 from 'http2';
+
+const server = http2.createSecureServer({
+  key: fs.readFileSync('./keys/server.key'),
+  cert: fs.readFileSync('./keys/server.crt'),
+}, (req, res) => {
+
+  console.log(req.url);
+
+  if (req.url === '/') {
+    const htmlFile = fs.readFileSync('./public/index.html', 'utf-8');
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(htmlFile);
+    return;
+  }
+
+  if (req.url?.endsWith('.js')) {
+    res.writeHead(200, { 'Content-Type': 'application/javascript' });
+  }
+  else if (req.url?.endsWith('.css')) {
+    res.writeHead(200, { 'Content-Type': 'text/css' });
+  }
+
+  try {
+    const responseContent = fs.readFileSync(`./public${req.url}`, 'utf-8');
+    res.end(responseContent);
+  }
+  catch (err) {
+    res.writeHead(404, { 'Content-Type': 'text/html' });
+    res.end();
+  }
+
+});
+
+server.listen(8080, () => {
+  console.log('Server running on port 8080');
+})
+#+end_src
+** Express
+*** Install
+#+begin_src bash
+npm install express
+npm i --save-dev @types/express
+#+end_src
+*** Contenido app.ts
+#+begin_src js
+import { Server } from "./presentation/server";
+
+(async () => {
+  main();
+})()
+
+function main() {
+
+  const server = new Server();
+  server.start();
+
+}
+#+end_src
+*** Estructura de directorios (src/)
+**** Carpeta Presentation
++ Se crea la carpeta presentation la cual va a tener todo lo relacionado con express
+#+begin_src bash
+mkdir -p src/presentation
+touch src/presentation/server.ts
+#+end_src
+**** src/presentation/server.ts
+#+begin_src js
+import express from 'express';
+
+export class Server {
+
+  private app = express();
+
+  async start() {
+
+    /* MIDDLEWARES */
+
+    /* PUBLIC FOLDER */
+    this.app.use(express.static('public'));
+
+    this.app.listen(3000, () => {
+      console.log(`Server running on port ${3000}`);
+    });
+
+  }
+
+}
+#+end_src
+** Variables de entorno .ENV
+***  Crear src/config/envs.ts
+#+begin_src bash
+mkdir -p src/config
+touch src/config/envs.ts
+#+end_src
+*** Crear archivo .env
+#+begin_src bash
+touch .env
+#+end_src
+*** Instalar paquetes
+#+begin_src bash
+npm i dotenv env-var
+#+end_src
+
+* Base de Datos
+[[https://gist.github.com/klerith/49bbec66abe6affe3700324d2d3bf440][Link de configuraciones]]
+** Prisma.io
+*** Instalacion
+#+begin_src bash
+npm install prisma --save-dev
+npx prisma init --datasource-provider postgresql
+#+end_src
+*** Crear Schema
++ Al ejecutar el comando bash anterior, se autogenera el archivo prisma/schema.prisma
++ Si ya se tiene creada la base de datos no hace falta hacer nada mas que ejecutar el comando pull recomendado a la hora de instalar el prisma
++ En caso contrario hay que modelar la base de datos agregando al final de prisma/schema.prisma como por ejemplo:
+#+begin_src
+model todo {
+  id Int @id @default(autoincrement())
+  text String @db.VarChar
+  completedAt DateTime? @db.Timestamp()
+}
+#+end_src
+*** Migraciones
++ Procedimientos para hacer las modificaciones a la base de datos
++ Al crear migraciones, podremos revertirlas o aplicarlas cuando se hagan los deployments a bases de datos en produccion
+#+begin_src bash
+npx prisma migrate dev --name init
+#+end_src
+*** Migraciones en deployment
++ Se le agrega al archivo de configuracion package.json el script de migracion
+#+begin_src json
+  "scripts": {
+    "dev": "tsnd --respawn --clear src/app.ts",
+    "build": "rimraf ./dist && tsc",
+    "prisma:migrate:prod": "prisma migrate deploy"
+  },
+#+end_src

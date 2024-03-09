@@ -1,0 +1,8 @@
+#+title: Readme
+
+* Dev
+1. Clonar el .env.template y crear el .env
+2. Ejecutar el comando:
+#+begin_src bash
+docker compose up -d
+#+end_src

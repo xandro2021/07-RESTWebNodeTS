@@ -258,3 +258,4 @@ Usado para el despliegue de la base de datos PostgreSql
 Recordar correr [[Migraciones en deployment]] para que se creen las tablas en la base de datos en la nube
 ** Railway
 Se puede usar tanto para proyecto backend como para base de datos
+Recordar correr [[Migraciones en deployment]] para que se creen las tablas en la base de datos en la nube

@@ -259,3 +259,15 @@ Recordar correr [[Migraciones en deployment]] para que se creen las tablas en la
 ** Railway
 Se puede usar tanto para proyecto backend como para base de datos
 Recordar correr [[Migraciones en deployment]] para que se creen las tablas en la base de datos en la nube
+* Notas sobre Clean Arquitecture
+** Domain
++ Son reglas que se imponen sobre todo lo demas. Lo mas importante de mi aplicacion.
+** DataSources
++ Son los origenes de datos
+** Repositories
++ Son metodos que vamos a tener para poder llegar a los datasources
+** Entities
++ Mas atomico de nuestra aplicacion, que no deberia tener ninguna inferencia del mundo exterior
++ No deberia tener nada de codigo externo, que no sea importaciones de librerias.
++ Deberia ser todo unicamente con el lenguaje de programacion que se esta usando
++ No esta relacionado a la base de datos, se asemeja mucho a lo que se va a grabar. Sin embargo, es lo que se va a usar en la aplicacion. De esta forma si la base de datos cambia no deberia de afectar la entidad y viceversa

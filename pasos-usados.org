@@ -8,6 +8,9 @@ npm init -y
 * Set typescript/Node
 + Se siguen los pasos del [[https://gist.github.com/Klerith/3ba17e86dc4fabd8301a59699b9ffc0b][repositorio de github]]
 
+* Set Testing
+** Instrucciones
+[[https://gist.github.com/Klerith/98d7b1bc0f1525e892f260813cad1007][Link al repositorio de github]]
 * Estructura
 ** Crear folder src
 *** app.ts
